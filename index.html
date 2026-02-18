@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Resume Builder - Template Match</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Manrope:wght@500;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <section class="panel editor">
+        <h1>Resume Builder (Template-Based)</h1>
+        <p class="muted">This builder now follows your uploaded resume template format.</p>
+
+        <form id="resumeForm">
+          <div class="group">
+            <h2>Header</h2>
+            <label>Full Name <input name="fullName" placeholder="Your Full Name" /></label>
+            <label>Tagline <input name="tagline" placeholder="Your professional headline" /></label>
+            <label>LinkedIn Logo URL <input name="linkedinUrl" placeholder="https://www.linkedin.com/in/your-id/" /></label>
+          </div>
+
+          <div class="group">
+            <div class="group-head">
+              <h2>Education</h2>
+              <button type="button" data-add="education">+ Add</button>
+            </div>
+            <div id="educationList" class="item-list"></div>
+          </div>
+
+          <div class="group">
+            <div class="group-head">
+              <h2>Expertise/Area of Interest</h2>
+              <button type="button" data-add="expertise">+ Add</button>
+            </div>
+            <div id="expertiseList" class="item-list"></div>
+          </div>
+
+          <div class="group">
+            <div class="group-head">
+              <h2>Achievements and Accomplishments</h2>
+              <button type="button" data-add="achievements">+ Add</button>
+            </div>
+            <div id="achievementsList" class="item-list"></div>
+          </div>
+
+          <div class="group">
+            <div class="group-head">
+              <h2>Work Experience</h2>
+              <button type="button" data-add="work">+ Add</button>
+            </div>
+            <div id="workList" class="item-list"></div>
+          </div>
+
+          <div class="group">
+            <div class="group-head">
+              <h2>Internships</h2>
+              <button type="button" data-add="internships">+ Add</button>
+            </div>
+            <div id="internshipsList" class="item-list"></div>
+          </div>
+
+          <div class="group">
+            <div class="group-head">
+              <h2>Projects</h2>
+              <button type="button" data-add="projects">+ Add</button>
+            </div>
+            <div id="projectsList" class="item-list"></div>
+          </div>
+
+          <div class="group">
+            <div class="group-head">
+              <h2>Certifications</h2>
+              <button type="button" data-add="certifications">+ Add</button>
+            </div>
+            <div id="certificationsList" class="item-list"></div>
+          </div>
+
+          <div class="group">
+            <div class="group-head">
+              <h2>Position of Responsibility</h2>
+              <button type="button" data-add="por">+ Add</button>
+            </div>
+            <div id="porList" class="item-list"></div>
+          </div>
+
+          <div class="group">
+            <div class="group-head">
+              <h2>Extra Curricular Activities</h2>
+              <button type="button" data-add="extra">+ Add</button>
+            </div>
+            <div id="extraList" class="item-list"></div>
+          </div>
+
+          <div class="group">
+            <div class="group-head">
+              <h2>Co-Curricular Activities</h2>
+              <button type="button" data-add="co">+ Add</button>
+            </div>
+            <div id="coList" class="item-list"></div>
+          </div>
+
+          <div class="group">
+            <div class="group-head">
+              <h2>Technical Skills</h2>
+              <button type="button" data-add="techSkills">+ Add</button>
+            </div>
+            <div id="techSkillsList" class="item-list"></div>
+          </div>
+
+          <div class="group">
+            <div class="group-head">
+              <h2>Online Professional Presence</h2>
+              <button type="button" data-add="links">+ Add</button>
+            </div>
+            <div id="linksList" class="item-list"></div>
+          </div>
+
+          <div class="group">
+            <div class="group-head">
+              <h2>Personal Details</h2>
+              <button type="button" data-add="personal">+ Add</button>
+            </div>
+            <div id="personalList" class="item-list"></div>
+          </div>
+
+          <div class="group">
+            <h2>Layout Controls</h2>
+            <input type="hidden" name="fontScale" value="1" />
+            <div class="font-controls">
+              <button type="button" id="fontDecrease">A-</button>
+              <button type="button" id="fontReset">Reset</button>
+              <button type="button" id="fontIncrease">A+</button>
+              <span id="fontScaleValue" class="font-scale-value">100%</span>
+            </div>
+          </div>
+
+          <div class="group">
+            <h2>Section Visibility</h2>
+            <div class="section-toggles">
+              <label><input type="checkbox" name="show_header" checked /> Header</label>
+              <label><input type="checkbox" name="show_linkedin_logo" checked /> LinkedIn Logo</label>
+              <label><input type="checkbox" name="show_education" checked /> Education</label>
+              <label><input type="checkbox" name="show_expertise" checked /> Expertise</label>
+              <label><input type="checkbox" name="show_achievements" checked /> Achievements</label>
+              <label><input type="checkbox" name="show_work" checked /> Work Experience</label>
+              <label><input type="checkbox" name="show_internships" checked /> Internships</label>
+              <label><input type="checkbox" name="show_projects" checked /> Projects</label>
+              <label><input type="checkbox" name="show_certifications" checked /> Certifications</label>
+              <label><input type="checkbox" name="show_por" checked /> Positions of Responsibility</label>
+              <label><input type="checkbox" name="show_extra" checked /> Extra Curricular</label>
+              <label><input type="checkbox" name="show_co" checked /> Co-Curricular</label>
+              <label><input type="checkbox" name="show_skills" checked /> Technical Skills</label>
+              <label><input type="checkbox" name="show_links" checked /> Online Presence</label>
+              <label><input type="checkbox" name="show_personal" checked /> Personal Details</label>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button type="button" id="downloadJson">Download Data</button>
+            <label class="file-pick">Load Data <input type="file" id="uploadJson" accept="application/json" /></label>
+            <button type="button" id="printResume" class="primary">Print / Save PDF</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="panel preview-panel">
+        <h2>Preview</h2>
+        <article id="resumePreview" class="resume"></article>
+      </section>
+    </main>
+
+    <template id="educationTemplate">
+      <div class="item-card">
+        <label>Year <input name="year" placeholder="Year or status" /></label>
+        <label>Degree <input name="degree" placeholder="Degree / Program" /></label>
+        <label>University/Board <input name="board" placeholder="University / Board" /></label>
+        <label>Institute <input name="institute" placeholder="Institute name" /></label>
+        <label>CGPA/% <input name="score" placeholder="Score / CGPA / %" /></label>
+        <button type="button" class="remove">Remove</button>
+      </div>
+    </template>
+
+    <template id="expertiseTemplate">
+      <div class="item-card">
+        <label>Area <input name="text" placeholder="e.g., Backend Development, System Design" /></label>
+        <button type="button" class="remove">Remove</button>
+      </div>
+    </template>
+
+    <template id="workTemplate">
+      <div class="item-card">
+        <label>Organization/Title <input name="title" placeholder="Company / Organization" /></label>
+        <label>Date <input name="date" placeholder="Start - End" /></label>
+        <label>Role <input name="role" placeholder="Your role" /></label>
+        <label>Highlights (one per line)
+          <textarea name="highlights" rows="3" placeholder="Impact and responsibilities"></textarea>
+        </label>
+        <button type="button" class="remove">Remove</button>
+      </div>
+    </template>
+
+    <template id="projectsTemplate">
+      <div class="item-card">
+        <label>Project Type <input name="type" placeholder="Project category / type" /></label>
+        <label>Date <input name="date" placeholder="Start - End" /></label>
+        <label>Project Name <input name="name" placeholder="Project name" /></label>
+        <label>Summary <textarea name="summary" rows="2" placeholder="Project summary"></textarea></label>
+        <label>Skills Used <input name="skills" placeholder="Tools / skills used" /></label>
+        <label>Team Size <input name="teamSize" placeholder="Number of contributors" /></label>
+        <label>Key Outcomes <textarea name="outcomes" rows="2" placeholder="Outcomes / impact"></textarea></label>
+        <button type="button" class="remove">Remove</button>
+      </div>
+    </template>
+
+    <template id="achievementsTemplate">
+      <div class="item-card">
+        <label>Title <input name="title" placeholder="Achievement title" /></label>
+        <label>Date <input name="date" placeholder="Oct'24" /></label>
+        <label>Description <textarea name="description" rows="2" placeholder="What you achieved and impact"></textarea></label>
+        <button type="button" class="remove">Remove</button>
+      </div>
+    </template>
+
+    <template id="internshipsTemplate">
+      <div class="item-card">
+        <label>Organization <input name="organization" placeholder="Company / Organization" /></label>
+        <label>Date <input name="date" placeholder="Jun'25 - Jul'25" /></label>
+        <label>Role <input name="role" placeholder="Backend Intern" /></label>
+        <label>Summary <textarea name="summary" rows="2" placeholder="Internship scope and outcome"></textarea></label>
+        <button type="button" class="remove">Remove</button>
+      </div>
+    </template>
+
+    <template id="certificationsTemplate">
+      <div class="item-card">
+        <label>Name <input name="name" placeholder="Certification name" /></label>
+        <label>Issuer <input name="issuer" placeholder="Platform / Institute" /></label>
+        <label>Date <input name="date" placeholder="Jan'26" /></label>
+        <label>URL <input name="url" placeholder="https://..." /></label>
+        <button type="button" class="remove">Remove</button>
+      </div>
+    </template>
+
+    <template id="porTemplate">
+      <div class="item-card">
+        <label>Title <input name="title" placeholder="Role / position title" /></label>
+        <label>Date <input name="date" placeholder="Start - End" /></label>
+        <label>Description <textarea name="description" rows="2" placeholder="Responsibilities and impact"></textarea></label>
+        <button type="button" class="remove">Remove</button>
+      </div>
+    </template>
+
+    <template id="extraTemplate">
+      <div class="item-card">
+        <label>Title <input name="title" placeholder="Activity / event name" /></label>
+        <label>Date <input name="date" placeholder="Month/Year or range" /></label>
+        <label>Description <textarea name="description" rows="2" placeholder="Description and achievement"></textarea></label>
+        <button type="button" class="remove">Remove</button>
+      </div>
+    </template>
+
+    <template id="coTemplate">
+      <div class="item-card">
+        <label>Title <input name="title" placeholder="Competition / activity title" /></label>
+        <label>Date <input name="date" placeholder="Month/Year or range" /></label>
+        <label>Description <textarea name="description" rows="2" placeholder="Contribution and result"></textarea></label>
+        <button type="button" class="remove">Remove</button>
+      </div>
+    </template>
+
+    <template id="linksTemplate">
+      <div class="item-card">
+        <label>Platform <input name="platform" placeholder="Platform name" /></label>
+        <label>URL <input name="url" placeholder="https://example.com/profile" /></label>
+        <button type="button" class="remove">Remove</button>
+      </div>
+    </template>
+
+    <template id="techSkillsTemplate">
+      <div class="item-card">
+        <label>Skill Line <input name="text" placeholder="e.g., Frameworks: React, Next.js, Node.js" /></label>
+        <button type="button" class="remove">Remove</button>
+      </div>
+    </template>
+
+    <template id="personalTemplate">
+      <div class="item-card">
+        <label>Email <input name="email" placeholder="name@example.com" /></label>
+        <label>Phone <input name="phone" placeholder="+1 555 000 0000" /></label>
+        <label>Location <input name="location" placeholder="City, State/Country" /></label>
+        <button type="button" class="remove">Remove</button>
+      </div>
+    </template>
+
+    <script src="script.js"></script>
+  </body>
+</html>
