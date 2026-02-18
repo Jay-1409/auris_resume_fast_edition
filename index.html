@@ -6,14 +6,18 @@
     <title>Resume Builder - Template Match</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Manrope:wght@500;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <main class="app">
       <section class="panel editor">
-        <h1>Resume Builder (Template-Based)</h1>
-        <p class="muted">This builder now follows your uploaded resume template format.</p>
+        <h1>Auris style resume builder (But faster!)</h1>
+        <!-- <p class="muted">This builder now follows your uploaded resume template format.</p> -->
+        <div class="community-links">
+          <a class="community-link" href="https://github.com/Jay-1409/auris_resume_fast_edition" target="_blank" rel="noopener">Contribute</a>
+          <a class="community-link" href="https://github.com/Jay-1409/auris_resume_fast_edition/issues/new" target="_blank" rel="noopener">Report Issue</a>
+        </div>
 
         <form id="resumeForm">
           <div class="group">
@@ -160,6 +164,11 @@
           </div>
 
           <div class="actions">
+            <span id="authStatus" class="auth-status">Cloud: Not configured</span>
+            <button type="button" id="signInBtn">Sign in with Google</button>
+            <button type="button" id="signOutBtn">Sign out</button>
+            <button type="button" id="cloudSaveBtn">Save to Cloud</button>
+            <button type="button" id="cloudLoadBtn">Load from Cloud</button>
             <button type="button" id="downloadJson">Download Data</button>
             <label class="file-pick">Load Data <input type="file" id="uploadJson" accept="application/json" /></label>
             <button type="button" id="printResume" class="primary">Print / Save PDF</button>
@@ -296,6 +305,20 @@
       </div>
     </template>
 
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+    <script>
+      window.FIREBASE_CONFIG = {
+        apiKey: "AIzaSyBVIOHWJqWF04jJcH-hwNbUl1frEtVTxR0",
+        authDomain: "fast-auris-resume.firebaseapp.com",
+        projectId: "fast-auris-resume",
+        storageBucket: "fast-auris-resume.firebasestorage.app",
+        messagingSenderId: "583067785827",
+        appId: "1:583067785827:web:5d08eb2017268e987b7656",
+        measurementId: "G-RN2DX150X6"
+      };
+    </script>
     <script src="script.js"></script>
   </body>
 </html>

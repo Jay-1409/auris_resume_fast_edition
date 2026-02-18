@@ -2,6 +2,24 @@ const form = document.getElementById('resumeForm');
 const preview = document.getElementById('resumePreview');
 const fontScaleInput = form.querySelector('[name="fontScale"]');
 const fontScaleValue = document.getElementById('fontScaleValue');
+const authStatusEl = document.getElementById('authStatus');
+const signInBtn = document.getElementById('signInBtn');
+const signOutBtn = document.getElementById('signOutBtn');
+const cloudSaveBtn = document.getElementById('cloudSaveBtn');
+const cloudLoadBtn = document.getElementById('cloudLoadBtn');
+
+const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
+  apiKey: '',
+  authDomain: '',
+  projectId: '',
+  appId: ''
+};
+
+let firebaseReady = false;
+let auth = null;
+let db = null;
+let authProvider = null;
+let currentUser = null;
 
 const scalarFields = [
   'fontScale', 'fullName', 'tagline', 'linkedinUrl'
@@ -113,6 +131,150 @@ function tel(phone) {
 
 function hasAny(value) {
   return Object.values(value || {}).some((v) => String(v || '').trim());
+}
+
+function isFirebaseConfigured() {
+  return ['apiKey', 'authDomain', 'projectId', 'appId'].every((key) => Boolean(FIREBASE_CONFIG[key]));
+}
+
+function isAuthEnvironmentSupported() {
+  const protocolOk = ['http:', 'https:', 'chrome-extension:'].includes(window.location.protocol);
+  const storageOk = (() => {
+    try {
+      const key = '__resume_builder_auth_check__';
+      window.localStorage.setItem(key, '1');
+      window.localStorage.removeItem(key);
+      return true;
+    } catch {
+      return false;
+    }
+  })();
+  return protocolOk && storageOk;
+}
+
+function setAuthStatus(text, isError = false) {
+  if (!authStatusEl) return;
+  authStatusEl.textContent = text;
+  authStatusEl.classList.toggle('error', isError);
+}
+
+function updateAuthControls() {
+  const enabled = firebaseReady;
+  if (signInBtn) signInBtn.disabled = !enabled || !!currentUser;
+  if (signOutBtn) signOutBtn.disabled = !enabled || !currentUser;
+  if (cloudSaveBtn) cloudSaveBtn.disabled = !enabled || !currentUser;
+  if (cloudLoadBtn) cloudLoadBtn.disabled = !enabled || !currentUser;
+}
+
+function resumeDocRef(uid) {
+  return db.collection('users').doc(uid).collection('resumes').doc('default');
+}
+
+async function handleSignIn() {
+  if (!auth || !authProvider) return;
+  try {
+    await auth.signInWithPopup(authProvider);
+  } catch (error) {
+    if (error?.code === 'auth/operation-not-supported-in-this-environment') {
+      try {
+        await auth.signInWithRedirect(authProvider);
+        return;
+      } catch (redirectError) {
+        setAuthStatus(`Sign-in failed: ${redirectError.message}`, true);
+        return;
+      }
+    }
+    setAuthStatus(`Sign-in failed: ${error.message}`, true);
+  }
+}
+
+async function handleSignOut() {
+  if (!auth) return;
+  try {
+    await auth.signOut();
+  } catch (error) {
+    setAuthStatus(`Sign-out failed: ${error.message}`, true);
+  }
+}
+
+async function saveToCloud() {
+  if (!db || !currentUser) return;
+  try {
+    sync();
+    await resumeDocRef(currentUser.uid).set(
+      {
+        data,
+        updatedAt: window.firebase.firestore.FieldValue.serverTimestamp()
+      },
+      { merge: true }
+    );
+    setAuthStatus('Cloud save complete.');
+  } catch (error) {
+    setAuthStatus(`Cloud save failed: ${error.message}`, true);
+  }
+}
+
+async function loadFromCloud(options = {}) {
+  const { silent = false } = options;
+  if (!db || !currentUser) return;
+  try {
+    const snap = await resumeDocRef(currentUser.uid).get();
+    if (!snap.exists || !snap.data()?.data) {
+      if (!silent) setAuthStatus('No cloud resume found yet.');
+      return;
+    }
+    load(snap.data().data);
+    if (!silent) setAuthStatus('Cloud resume loaded.');
+  } catch (error) {
+    setAuthStatus(`Cloud load failed: ${error.message}`, true);
+  }
+}
+
+function initFirebase() {
+  if (!window.firebase) {
+    setAuthStatus('Cloud unavailable: Firebase SDK not loaded.', true);
+    updateAuthControls();
+    return;
+  }
+
+  if (!isAuthEnvironmentSupported()) {
+    setAuthStatus('Use http(s) URL with localStorage enabled (not file://).', true);
+    updateAuthControls();
+    return;
+  }
+
+  if (!isFirebaseConfigured()) {
+    setAuthStatus('Cloud disabled: add window.FIREBASE_CONFIG.', true);
+    updateAuthControls();
+    return;
+  }
+
+  try {
+    if (!window.firebase.apps.length) {
+      window.firebase.initializeApp(FIREBASE_CONFIG);
+    }
+    auth = window.firebase.auth();
+    db = window.firebase.firestore();
+    authProvider = new window.firebase.auth.GoogleAuthProvider();
+    firebaseReady = true;
+    updateAuthControls();
+
+    auth.onAuthStateChanged(async (user) => {
+      currentUser = user || null;
+      updateAuthControls();
+      if (!currentUser) {
+        setAuthStatus('Signed out.');
+        return;
+      }
+      const label = currentUser.displayName || currentUser.email || 'User';
+      setAuthStatus(`Signed in: ${label}`);
+      await loadFromCloud({ silent: true });
+    });
+  } catch (error) {
+    setAuthStatus(`Firebase init failed: ${error.message}`, true);
+    firebaseReady = false;
+    updateAuthControls();
+  }
 }
 
 function getScalarElement(name) {
@@ -639,6 +801,11 @@ document.getElementById('uploadJson').addEventListener('change', async (e) => {
 
 document.getElementById('printResume').addEventListener('click', () => window.print());
 
+signInBtn?.addEventListener('click', handleSignIn);
+signOutBtn?.addEventListener('click', handleSignOut);
+cloudSaveBtn?.addEventListener('click', saveToCloud);
+cloudLoadBtn?.addEventListener('click', () => loadFromCloud({ silent: false }));
+
 document.getElementById('fontDecrease').addEventListener('click', () => {
   applyFontScale(currentScaleValue() - 0.05);
   sync();
@@ -654,5 +821,6 @@ document.getElementById('fontReset').addEventListener('click', () => {
   sync();
 });
 
+initFirebase();
 setupCollapsibleGroups();
 load(defaults);
