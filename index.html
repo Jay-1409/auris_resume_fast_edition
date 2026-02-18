@@ -17,6 +17,7 @@
         <div class="community-links">
           <a class="community-link" href="https://github.com/Jay-1409/auris_resume_fast_edition" target="_blank" rel="noopener">Contribute</a>
           <a class="community-link" href="https://github.com/Jay-1409/auris_resume_fast_edition/issues/new" target="_blank" rel="noopener">Report Issue</a>
+          <button type="button" class="community-link" id="openInstructionsBtn">Instructions</button>
         </div>
 
         <form id="resumeForm">
@@ -182,6 +183,26 @@
       </section>
     </main>
 
+    <div id="instructionsModal" class="modal" aria-hidden="true">
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="instructionsTitle">
+        <div class="modal-head">
+          <h2 id="instructionsTitle">How To Use</h2>
+          <button type="button" id="closeInstructionsBtn">Close</button>
+        </div>
+        <div class="modal-body">
+          <p><strong>1. Start editing:</strong> Click <code>Edit</code> on any section, then add entries with <code>+ Add</code>.</p>
+          <p><strong>2. Reorder by date:</strong> Entries are auto-sorted by date (latest first) in preview.</p>
+          <p><strong>3. Show/hide sections:</strong> Use <code>Section Visibility</code> toggles.</p>
+          <p><strong>4. Resize content:</strong> Use <code>A-</code>, <code>A+</code>, and <code>Reset</code> in Layout Controls.</p>
+          <p><strong>5. Add links:</strong> Paste URLs directly, or use <code>[label](https://...)</code> format for clickable text.</p>
+          <p><strong>6. Save local:</strong> Use <code>Download Data</code> for JSON backup and <code>Load Data</code> to restore.</p>
+          <p><strong>7. Save cloud:</strong> Sign in with Google, then use <code>Save to Cloud</code> and <code>Load from Cloud</code>.</p>
+          <p><strong>8. Print/PDF:</strong> Click <code>Print / Save PDF</code>. In print dialog, disable browser headers/footers for cleaner output.</p>
+          <p><strong>9. LinkedIn logo:</strong> Add your LinkedIn URL in Header to render clickable logo in resume top area.</p>
+        </div>
+      </div>
+    </div>
+
     <template id="educationTemplate">
       <div class="item-card">
         <label>Year <input name="year" placeholder="Year or status" /></label>
@@ -310,13 +331,13 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
     <script>
       window.FIREBASE_CONFIG = {
-        apiKey: "AIzaSyBVIOHWJqWF04jJcH-hwNbUl1frEtVTxR0",
-        authDomain: "fast-auris-resume.firebaseapp.com",
-        projectId: "fast-auris-resume",
-        storageBucket: "fast-auris-resume.firebasestorage.app",
-        messagingSenderId: "583067785827",
-        appId: "1:583067785827:web:5d08eb2017268e987b7656",
-        measurementId: "G-RN2DX150X6"
+        apiKey: "REPLACE_ME",
+        authDomain: "REPLACE_ME.firebaseapp.com",
+        projectId: "REPLACE_ME",
+        storageBucket: "REPLACE_ME.firebasestorage.app",
+        messagingSenderId: "REPLACE_ME",
+        appId: "REPLACE_ME",
+        measurementId: "REPLACE_ME"
       };
     </script>
     <script src="script.js"></script>

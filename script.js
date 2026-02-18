@@ -7,6 +7,9 @@ const signInBtn = document.getElementById('signInBtn');
 const signOutBtn = document.getElementById('signOutBtn');
 const cloudSaveBtn = document.getElementById('cloudSaveBtn');
 const cloudLoadBtn = document.getElementById('cloudLoadBtn');
+const instructionsModal = document.getElementById('instructionsModal');
+const openInstructionsBtn = document.getElementById('openInstructionsBtn');
+const closeInstructionsBtn = document.getElementById('closeInstructionsBtn');
 
 const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
   apiKey: '',
@@ -280,6 +283,18 @@ function initFirebase() {
 function getScalarElement(name) {
   const matches = [...form.querySelectorAll(`[name="${name}"]`)];
   return matches.find((el) => !el.closest('.item-card')) || matches[0] || null;
+}
+
+function openInstructions() {
+  if (!instructionsModal) return;
+  instructionsModal.classList.add('open');
+  instructionsModal.setAttribute('aria-hidden', 'false');
+}
+
+function closeInstructions() {
+  if (!instructionsModal) return;
+  instructionsModal.classList.remove('open');
+  instructionsModal.setAttribute('aria-hidden', 'true');
 }
 
 function readVisibilityFromForm() {
@@ -805,6 +820,14 @@ signInBtn?.addEventListener('click', handleSignIn);
 signOutBtn?.addEventListener('click', handleSignOut);
 cloudSaveBtn?.addEventListener('click', saveToCloud);
 cloudLoadBtn?.addEventListener('click', () => loadFromCloud({ silent: false }));
+openInstructionsBtn?.addEventListener('click', openInstructions);
+closeInstructionsBtn?.addEventListener('click', closeInstructions);
+instructionsModal?.addEventListener('click', (event) => {
+  if (event.target === instructionsModal) closeInstructions();
+});
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') closeInstructions();
+});
 
 document.getElementById('fontDecrease').addEventListener('click', () => {
   applyFontScale(currentScaleValue() - 0.05);

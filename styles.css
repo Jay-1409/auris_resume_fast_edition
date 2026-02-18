@@ -121,6 +121,11 @@ body {
   transition: transform 140ms ease, background-color 140ms ease, border-color 140ms ease, color 140ms ease;
 }
 
+.community-link[type="button"] {
+  font: inherit;
+  cursor: pointer;
+}
+
 .community-link:hover {
   transform: translateY(-1px);
   border-color: var(--primary-hover);
@@ -131,6 +136,54 @@ body {
 .community-link:focus-visible {
   outline: none;
   box-shadow: var(--focus-ring);
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2);
+  background: rgba(20, 24, 33, 0.45);
+  backdrop-filter: blur(2px);
+  z-index: 1000;
+}
+
+.modal.open {
+  display: flex;
+}
+
+.modal-card {
+  width: min(680px, 100%);
+  max-height: min(86vh, 760px);
+  overflow: auto;
+  border-radius: 16px;
+  border: 1px solid rgba(181, 188, 203, 0.65);
+  background: #ffffff;
+  box-shadow: var(--shadow-md);
+  padding: var(--space-2);
+}
+
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-1);
+  margin-bottom: var(--space-1);
+}
+
+.modal-head h2 {
+  margin: 0;
+  font-family: "Poppins", "Inter", sans-serif;
+  font-size: 1.05rem;
+}
+
+.modal-body p {
+  margin: 0 0 10px;
+  color: #2f3645;
+  font-size: 0.92rem;
+  line-height: 1.45;
 }
 
 .group {
