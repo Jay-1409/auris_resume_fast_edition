@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Auris like reseume builder but fast!</title>
+    <title>Auris style resume builder (but faster!)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet" />
@@ -205,11 +205,11 @@
 
     <template id="educationTemplate">
       <div class="item-card">
-        <label>Year <input name="year" placeholder="Year or status" /></label>
-        <label>Degree <input name="degree" placeholder="Degree / Program" /></label>
-        <label>University/Board <input name="board" placeholder="University / Board" /></label>
-        <label>Institute <input name="institute" placeholder="Institute name" /></label>
-        <label>CGPA/% <input name="score" placeholder="Score / CGPA / %" /></label>
+        <label><input type="checkbox" name="show_education_year" class="subfield-toggle" checked /> Year <input name="year" placeholder="Year or status" /></label>
+        <label><input type="checkbox" name="show_education_degree" class="subfield-toggle" checked /> Degree <input name="degree" placeholder="Degree / Program" /></label>
+        <label><input type="checkbox" name="show_education_board" class="subfield-toggle" checked /> University/Board <input name="board" placeholder="University / Board" /></label>
+        <label><input type="checkbox" name="show_education_institute" class="subfield-toggle" checked /> Institute <input name="institute" placeholder="Institute name" /></label>
+        <label><input type="checkbox" name="show_education_score" class="subfield-toggle" checked /> CGPA/% <input name="score" placeholder="Score / CGPA / %" /></label>
         <button type="button" class="remove">Remove</button>
       </div>
     </template>
@@ -223,10 +223,10 @@
 
     <template id="workTemplate">
       <div class="item-card">
-        <label>Organization/Title <input name="title" placeholder="Company / Organization" /></label>
-        <label>Date <input name="date" placeholder="Start - End" /></label>
-        <label>Role <input name="role" placeholder="Your role" /></label>
-        <label>Highlights (one per line)
+        <label><input type="checkbox" name="show_work_title" class="subfield-toggle" checked /> Organization/Title <input name="title" placeholder="Company / Organization" /></label>
+        <label><input type="checkbox" name="show_work_date" class="subfield-toggle" checked /> Date <input name="date" placeholder="Start - End" /></label>
+        <label><input type="checkbox" name="show_work_role" class="subfield-toggle" checked /> Role <input name="role" placeholder="Your role" /></label>
+        <label><input type="checkbox" name="show_work_highlights" class="subfield-toggle" checked /> Highlights (one per line)
           <textarea name="highlights" rows="3" placeholder="Impact and responsibilities"></textarea>
         </label>
         <button type="button" class="remove">Remove</button>
@@ -235,77 +235,77 @@
 
     <template id="projectsTemplate">
       <div class="item-card">
-        <label>Project Type <input name="type" placeholder="Project category / type" /></label>
-        <label>Date <input name="date" placeholder="Start - End" /></label>
-        <label>Project Name <input name="name" placeholder="Project name" /></label>
-        <label>Summary <textarea name="summary" rows="2" placeholder="Project summary"></textarea></label>
-        <label>Skills Used <input name="skills" placeholder="Tools / skills used" /></label>
-        <label>Team Size <input name="teamSize" placeholder="Number of contributors" /></label>
-        <label>Key Outcomes <textarea name="outcomes" rows="2" placeholder="Outcomes / impact"></textarea></label>
+        <label><input type="checkbox" name="show_projects_type" class="subfield-toggle" checked /> Project Type <input name="type" placeholder="Project category / type" /></label>
+        <label><input type="checkbox" name="show_projects_date" class="subfield-toggle" checked /> Date <input name="date" placeholder="Start - End" /></label>
+        <label><input type="checkbox" name="show_projects_name" class="subfield-toggle" checked /> Project Name <input name="name" placeholder="Project name" /></label>
+        <label><input type="checkbox" name="show_projects_summary" class="subfield-toggle" checked /> Summary <textarea name="summary" rows="2" placeholder="Project summary"></textarea></label>
+        <label><input type="checkbox" name="show_projects_skills" class="subfield-toggle" checked /> Skills Used <input name="skills" placeholder="Tools / skills used" /></label>
+        <label><input type="checkbox" name="show_projects_teamSize" class="subfield-toggle" checked /> Team Size <input name="teamSize" placeholder="Number of contributors" /></label>
+        <label><input type="checkbox" name="show_projects_outcomes" class="subfield-toggle" checked /> Key Outcomes <textarea name="outcomes" rows="2" placeholder="Outcomes / impact"></textarea></label>
         <button type="button" class="remove">Remove</button>
       </div>
     </template>
 
     <template id="achievementsTemplate">
       <div class="item-card">
-        <label>Title <input name="title" placeholder="Achievement title" /></label>
-        <label>Date <input name="date" placeholder="Oct'24" /></label>
-        <label>Description <textarea name="description" rows="2" placeholder="What you achieved and impact"></textarea></label>
+        <label><input type="checkbox" name="show_achievements_title" class="subfield-toggle" checked /> Title <input name="title" placeholder="Achievement title" /></label>
+        <label><input type="checkbox" name="show_achievements_date" class="subfield-toggle" checked /> Date <input name="date" placeholder="Oct'24" /></label>
+        <label><input type="checkbox" name="show_achievements_description" class="subfield-toggle" checked /> Description <textarea name="description" rows="2" placeholder="What you achieved and impact"></textarea></label>
         <button type="button" class="remove">Remove</button>
       </div>
     </template>
 
     <template id="internshipsTemplate">
       <div class="item-card">
-        <label>Organization <input name="organization" placeholder="Company / Organization" /></label>
-        <label>Date <input name="date" placeholder="Jun'25 - Jul'25" /></label>
-        <label>Role <input name="role" placeholder="Backend Intern" /></label>
-        <label>Summary <textarea name="summary" rows="2" placeholder="Internship scope and outcome"></textarea></label>
+        <label><input type="checkbox" name="show_internships_organization" class="subfield-toggle" checked /> Organization <input name="organization" placeholder="Company / Organization" /></label>
+        <label><input type="checkbox" name="show_internships_date" class="subfield-toggle" checked /> Date <input name="date" placeholder="Jun'25 - Jul'25" /></label>
+        <label><input type="checkbox" name="show_internships_role" class="subfield-toggle" checked /> Role <input name="role" placeholder="Backend Intern" /></label>
+        <label><input type="checkbox" name="show_internships_summary" class="subfield-toggle" checked /> Summary <textarea name="summary" rows="2" placeholder="Internship scope and outcome"></textarea></label>
         <button type="button" class="remove">Remove</button>
       </div>
     </template>
 
     <template id="certificationsTemplate">
       <div class="item-card">
-        <label>Name <input name="name" placeholder="Certification name" /></label>
-        <label>Issuer <input name="issuer" placeholder="Platform / Institute" /></label>
-        <label>Date <input name="date" placeholder="Jan'26" /></label>
-        <label>URL <input name="url" placeholder="https://..." /></label>
+        <label><input type="checkbox" name="show_certifications_name" class="subfield-toggle" checked /> Name <input name="name" placeholder="Certification name" /></label>
+        <label><input type="checkbox" name="show_certifications_issuer" class="subfield-toggle" checked /> Issuer <input name="issuer" placeholder="Platform / Institute" /></label>
+        <label><input type="checkbox" name="show_certifications_date" class="subfield-toggle" checked /> Date <input name="date" placeholder="Jan'26" /></label>
+        <label><input type="checkbox" name="show_certifications_url" class="subfield-toggle" checked /> URL <input name="url" placeholder="https://..." /></label>
         <button type="button" class="remove">Remove</button>
       </div>
     </template>
 
     <template id="porTemplate">
       <div class="item-card">
-        <label>Title <input name="title" placeholder="Role / position title" /></label>
-        <label>Date <input name="date" placeholder="Start - End" /></label>
-        <label>Description <textarea name="description" rows="2" placeholder="Responsibilities and impact"></textarea></label>
+        <label><input type="checkbox" name="show_por_title" class="subfield-toggle" checked /> Title <input name="title" placeholder="Role / position title" /></label>
+        <label><input type="checkbox" name="show_por_date" class="subfield-toggle" checked /> Date <input name="date" placeholder="Start - End" /></label>
+        <label><input type="checkbox" name="show_por_description" class="subfield-toggle" checked /> Description <textarea name="description" rows="2" placeholder="Responsibilities and impact"></textarea></label>
         <button type="button" class="remove">Remove</button>
       </div>
     </template>
 
     <template id="extraTemplate">
       <div class="item-card">
-        <label>Title <input name="title" placeholder="Activity / event name" /></label>
-        <label>Date <input name="date" placeholder="Month/Year or range" /></label>
-        <label>Description <textarea name="description" rows="2" placeholder="Description and achievement"></textarea></label>
+        <label><input type="checkbox" name="show_extra_title" class="subfield-toggle" checked /> Title <input name="title" placeholder="Activity / event name" /></label>
+        <label><input type="checkbox" name="show_extra_date" class="subfield-toggle" checked /> Date <input name="date" placeholder="Month/Year or range" /></label>
+        <label><input type="checkbox" name="show_extra_description" class="subfield-toggle" checked /> Description <textarea name="description" rows="2" placeholder="Description and achievement"></textarea></label>
         <button type="button" class="remove">Remove</button>
       </div>
     </template>
 
     <template id="coTemplate">
       <div class="item-card">
-        <label>Title <input name="title" placeholder="Competition / activity title" /></label>
-        <label>Date <input name="date" placeholder="Month/Year or range" /></label>
-        <label>Description <textarea name="description" rows="2" placeholder="Contribution and result"></textarea></label>
+        <label><input type="checkbox" name="show_co_title" class="subfield-toggle" checked /> Title <input name="title" placeholder="Competition / activity title" /></label>
+        <label><input type="checkbox" name="show_co_date" class="subfield-toggle" checked /> Date <input name="date" placeholder="Month/Year or range" /></label>
+        <label><input type="checkbox" name="show_co_description" class="subfield-toggle" checked /> Description <textarea name="description" rows="2" placeholder="Contribution and result"></textarea></label>
         <button type="button" class="remove">Remove</button>
       </div>
     </template>
 
     <template id="linksTemplate">
       <div class="item-card">
-        <label>Platform <input name="platform" placeholder="Platform name" /></label>
-        <label>URL <input name="url" placeholder="https://example.com/profile" /></label>
+        <label><input type="checkbox" name="show_links_platform" class="subfield-toggle" checked /> Platform <input name="platform" placeholder="Platform name" /></label>
+        <label><input type="checkbox" name="show_links_url" class="subfield-toggle" checked /> URL <input name="url" placeholder="https://example.com/profile" /></label>
         <button type="button" class="remove">Remove</button>
       </div>
     </template>
@@ -319,9 +319,9 @@
 
     <template id="personalTemplate">
       <div class="item-card">
-        <label>Email <input name="email" placeholder="name@example.com" /></label>
-        <label>Phone <input name="phone" placeholder="+1 555 000 0000" /></label>
-        <label>Location <input name="location" placeholder="City, State/Country" /></label>
+        <label><input type="checkbox" name="show_personal_email" class="subfield-toggle" checked /> Email <input name="email" placeholder="name@example.com" /></label>
+        <label><input type="checkbox" name="show_personal_phone" class="subfield-toggle" checked /> Phone <input name="phone" placeholder="+1 555 000 0000" /></label>
+        <label><input type="checkbox" name="show_personal_location" class="subfield-toggle" checked /> Location <input name="location" placeholder="City, State/Country" /></label>
         <button type="button" class="remove">Remove</button>
       </div>
     </template>
