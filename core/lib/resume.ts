@@ -33,6 +33,7 @@ export type Personal = { email: string; phone: string; location: string };
 export type Visibility = {
   header: boolean;
   linkedinLogo: boolean;
+  githubLogo: boolean;
   education: boolean;
   expertise: boolean;
   achievements: boolean;
@@ -53,6 +54,7 @@ export type ResumeData = {
   fullName: string;
   tagline: string;
   linkedinUrl: string;
+  githubUrl: string;
   education: Education[];
   expertise: Expertise[];
   achievements: Achievement[];
@@ -72,6 +74,7 @@ export type ResumeData = {
 export const defaultVisibility: Visibility = {
   header: true,
   linkedinLogo: true,
+  githubLogo: true,
   education: true,
   expertise: true,
   achievements: true,
@@ -92,6 +95,7 @@ export const defaultResumeData: ResumeData = {
   fullName: "",
   tagline: "",
   linkedinUrl: "",
+  githubUrl: "",
   education: [],
   expertise: [],
   achievements: [],

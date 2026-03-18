@@ -27,7 +27,10 @@ type ResumeEditorProps = {
 };
 
 export function ResumeEditor({ data, setData }: ResumeEditorProps) {
-  const updateHeader = (field: "fullName" | "tagline" | "linkedinUrl", value: string) => {
+  const updateHeader = (
+    field: "fullName" | "tagline" | "linkedinUrl" | "githubUrl",
+    value: string,
+  ) => {
     setData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -118,6 +121,7 @@ export function ResumeEditor({ data, setData }: ResumeEditorProps) {
             <Input className="h-9" placeholder="Full name" value={data.fullName} onChange={(e) => updateHeader("fullName", e.target.value)} />
             <Input className="h-9" placeholder="Tagline" value={data.tagline} onChange={(e) => updateHeader("tagline", e.target.value)} />
             <Input className="h-9" placeholder="LinkedIn URL" value={data.linkedinUrl} onChange={(e) => updateHeader("linkedinUrl", e.target.value)} />
+            <Input className="h-9" placeholder="GitHub URL" value={data.githubUrl} onChange={(e) => updateHeader("githubUrl", e.target.value)} />
           </div>
         </div>
 

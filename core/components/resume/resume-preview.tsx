@@ -33,22 +33,54 @@ export function ResumePreview({ data }: ResumePreviewProps) {
         fontSize: `${13 * data.fontScale}px`,
       }}
     >
-      {v.header && (data.fullName || data.tagline || data.linkedinUrl) && (
+      {v.header && (data.fullName || data.tagline || data.linkedinUrl || data.githubUrl) && (
         <>
-          <div className="mb-1 flex min-h-4.5 items-start justify-between gap-3">
+          <div className="mb-1 flex min-h-4.5 items-center justify-between gap-3">
             <h1 className="text-[30px] leading-[1.08] font-semibold tracking-tight">
               {data.fullName}
             </h1>
-            {v.linkedinLogo && data.linkedinUrl && (
-              <a
-                href={safeUrl(data.linkedinUrl)}
-                target="_blank"
-                rel="noreferrer"
-                className="pt-1 text-[#0a66c2]"
-              >
-                LinkedIn
-              </a>
-            )}
+            <div className="flex items-center gap-2 pt-1">
+              {v.linkedinLogo && data.linkedinUrl && (
+                <a
+                  href={safeUrl(data.linkedinUrl)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-[#0a66c2]"
+                  aria-label="LinkedIn"
+                  title="LinkedIn"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    className="h-5 w-5"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path d="M4.983 3.5C4.983 4.88 3.862 6 2.482 6S-.018 4.88-.018 3.5 1.103 1 2.482 1s2.501 1.12 2.501 2.5zM.5 8h4v13h-4V8zm7 0h3.832v1.775h.055c.534-1.014 1.84-2.084 3.788-2.084C19.225 7.69 21 10.04 21 13.51V21h-4v-6.637c0-1.583-.028-3.62-2.206-3.62-2.21 0-2.548 1.726-2.548 3.506V21h-4V8z" />
+                  </svg>
+                </a>
+              )}
+              {v.githubLogo && data.githubUrl && (
+                <a
+                  href={safeUrl(data.githubUrl)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-zinc-800"
+                  aria-label="GitHub"
+                  title="GitHub"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    className="h-5 w-5"
+                    fill="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path d="M12 1C5.923 1 1 5.922 1 12c0 4.867 3.15 8.996 7.523 10.452.55.102.752-.239.752-.53 0-.261-.01-.953-.015-1.87-3.06.665-3.706-1.474-3.706-1.474-.5-1.272-1.222-1.611-1.222-1.611-.998-.681.075-.667.075-.667 1.103.078 1.683 1.133 1.683 1.133.98 1.679 2.571 1.194 3.198.913.1-.71.384-1.194.699-1.469-2.442-.278-5.01-1.221-5.01-5.434 0-1.2.43-2.182 1.133-2.951-.114-.278-.491-1.397.108-2.913 0 0 .924-.296 3.027 1.128A10.49 10.49 0 0112 6.845c.935.004 1.877.126 2.757.37 2.1-1.424 3.022-1.128 3.022-1.128.601 1.516.224 2.635.11 2.913.706.769 1.132 1.751 1.132 2.951 0 4.223-2.572 5.153-5.022 5.426.394.34.746 1.012.746 2.04 0 1.472-.013 2.659-.013 3.021 0 .294.198.637.758.529C19.853 20.992 23 16.864 23 12c0-6.078-4.922-11-11-11z" />
+                  </svg>
+                </a>
+              )}
+            </div>
           </div>
           <p className="mb-2 mt-1 text-[14px] leading-tight italic font-medium text-zinc-700">
             {data.tagline}
