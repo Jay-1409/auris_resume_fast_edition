@@ -1,4 +1,5 @@
 import * as React from "react";
+import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,13 +21,52 @@ import {
   defaultResumeData,
   defaultVisibility,
 } from "@/lib/resume";
+import { getFirebaseDb, isFirebaseConfigured } from "@/lib/firebase";
 
 type ResumeEditorProps = {
   data: ResumeData;
   setData: React.Dispatch<React.SetStateAction<ResumeData>>;
 };
 
+type ReorderableKey =
+  | "education"
+  | "work"
+  | "projects"
+  | "achievements"
+  | "expertise"
+  | "techSkills"
+  | "internships"
+  | "certifications"
+  | "por"
+  | "extra"
+  | "co"
+  | "links"
+  | "personal";
+
 export function ResumeEditor({ data, setData }: ResumeEditorProps) {
+  const [cloudKey, setCloudKey] = React.useState("default");
+  const [cloudStatus, setCloudStatus] = React.useState("");
+  const [cloudBusy, setCloudBusy] = React.useState(false);
+  const [dragItem, setDragItem] = React.useState<{
+    key: ReorderableKey;
+    index: number;
+  } | null>(null);
+  const [dropTarget, setDropTarget] = React.useState<{
+    key: ReorderableKey;
+    index: number;
+  } | null>(null);
+
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+    const saved = window.localStorage.getItem("resume_cloud_key")?.trim();
+    if (saved) setCloudKey(saved);
+  }, []);
+
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem("resume_cloud_key", cloudKey.trim() || "default");
+  }, [cloudKey]);
+
   const updateHeader = (
     field: "fullName" | "tagline" | "linkedinUrl" | "githubUrl",
     value: string,
@@ -70,6 +110,58 @@ export function ResumeEditor({ data, setData }: ResumeEditorProps) {
     }));
   };
 
+  const moveListItem = (key: ReorderableKey, from: number, to: number) => {
+    if (from === to) return;
+
+    setData((prev) => {
+      const list = [...(prev[key] as Record<string, string>[])];
+      if (from < 0 || to < 0 || from >= list.length || to >= list.length) return prev;
+      const [moved] = list.splice(from, 1);
+      list.splice(to, 0, moved);
+      return { ...prev, [key]: list };
+    });
+  };
+
+  const dragBoxProps = (
+    key: ReorderableKey,
+    index: number,
+  ): React.HTMLAttributes<HTMLDivElement> => ({
+    draggable: true,
+    onDragStart: () => {
+      setDragItem({ key, index });
+      setDropTarget(null);
+    },
+    onDragEnter: (e) => {
+      if (dragItem?.key !== key) return;
+      e.preventDefault();
+      setDropTarget({ key, index });
+    },
+    onDragOver: (e) => {
+      if (dragItem?.key === key) {
+        e.preventDefault();
+        setDropTarget({ key, index });
+      }
+    },
+    onDrop: (e) => {
+      e.preventDefault();
+      if (!dragItem || dragItem.key !== key) return;
+      moveListItem(key, dragItem.index, index);
+      setDragItem(null);
+      setDropTarget(null);
+    },
+    onDragEnd: () => {
+      setDragItem(null);
+      setDropTarget(null);
+    },
+  });
+
+  const dropTargetClass = (key: ReorderableKey, index: number) => {
+    const isSameAsSource = dragItem?.key === key && dragItem.index === index;
+    const isTarget = dropTarget?.key === key && dropTarget.index === index;
+    if (isSameAsSource || !isTarget) return "";
+    return " ring-2 ring-sky-400 border-sky-400 bg-sky-50/50";
+  };
+
   const exportJson = () => {
     const blob = new Blob([JSON.stringify(data, null, 2)], {
       type: "application/json",
@@ -103,6 +195,86 @@ export function ResumeEditor({ data, setData }: ResumeEditorProps) {
     e.target.value = "";
   };
 
+  const saveToCloud = async () => {
+    const key = cloudKey.trim() || "default";
+    if (!isFirebaseConfigured()) {
+      setCloudStatus("Cloud disabled: set NEXT_PUBLIC_FIREBASE_* env values.");
+      return;
+    }
+
+    const db = getFirebaseDb();
+    if (!db) {
+      setCloudStatus("Cloud unavailable: Firebase init failed.");
+      return;
+    }
+
+    setCloudBusy(true);
+    setCloudStatus("Saving...");
+    try {
+      const ref = doc(db, "resumes", key);
+      await setDoc(
+        ref,
+        {
+          data,
+          updatedAt: serverTimestamp(),
+        },
+        { merge: true },
+      );
+      setCloudStatus(`Saved to cloud key: ${key}`);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "unknown error";
+      setCloudStatus(`Save failed: ${message}`);
+    } finally {
+      setCloudBusy(false);
+    }
+  };
+
+  const loadFromCloud = async () => {
+    const key = cloudKey.trim() || "default";
+    if (!isFirebaseConfigured()) {
+      setCloudStatus("Cloud disabled: set NEXT_PUBLIC_FIREBASE_* env values.");
+      return;
+    }
+
+    const db = getFirebaseDb();
+    if (!db) {
+      setCloudStatus("Cloud unavailable: Firebase init failed.");
+      return;
+    }
+
+    setCloudBusy(true);
+    setCloudStatus("Loading...");
+    try {
+      const ref = doc(db, "resumes", key);
+      const snapshot = await getDoc(ref);
+      if (!snapshot.exists()) {
+        setCloudStatus(`No cloud data found for key: ${key}`);
+        return;
+      }
+
+      const payload = snapshot.data()?.data as Partial<ResumeData> | undefined;
+      if (!payload) {
+        setCloudStatus("Cloud record found, but resume data is missing.");
+        return;
+      }
+
+      setData({
+        ...defaultResumeData,
+        ...payload,
+        sectionVisibility: {
+          ...defaultVisibility,
+          ...(payload.sectionVisibility ?? {}),
+        },
+      });
+      setCloudStatus(`Loaded from cloud key: ${key}`);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "unknown error";
+      setCloudStatus(`Load failed: ${message}`);
+    } finally {
+      setCloudBusy(false);
+    }
+  };
+
   return (
     <div
       style={{ fontFamily: "var(--font-geist-sans), Inter, Segoe UI, sans-serif" }}
@@ -127,9 +299,10 @@ export function ResumeEditor({ data, setData }: ResumeEditorProps) {
 
         <div className="rounded-lg border p-3">
           <h2 className="text-sm font-semibold">Education</h2>
+          <p className="mt-1 text-[11px] text-zinc-600">Drag cards to reorder.</p>
           <div className="mt-2 space-y-2">
             {data.education.map((row, idx) => (
-              <div key={idx} className="rounded-md border p-2">
+              <div key={idx} className={`cursor-move rounded-md border p-2${dropTargetClass("education", idx)}`} {...dragBoxProps("education", idx)}>
                 <div className="grid grid-cols-2 gap-2">
                   <Input className="h-8 text-xs" placeholder="Year" value={row.year} onChange={(e) => updateListItem("education", idx, { year: e.target.value })} />
                   <Input className="h-8 text-xs" placeholder="Degree" value={row.degree} onChange={(e) => updateListItem("education", idx, { degree: e.target.value })} />
@@ -150,9 +323,10 @@ export function ResumeEditor({ data, setData }: ResumeEditorProps) {
 
         <div className="rounded-lg border p-3">
           <h2 className="text-sm font-semibold">Experience & Projects</h2>
+          <p className="mt-1 text-[11px] text-zinc-600">Drag cards to reorder.</p>
           <div className="mt-2 space-y-2">
             {data.work.map((row, idx) => (
-              <div key={idx} className="rounded-md border p-2">
+              <div key={idx} className={`cursor-move rounded-md border p-2${dropTargetClass("work", idx)}`} {...dragBoxProps("work", idx)}>
                 <Input className="mb-2 h-8 w-full text-xs" placeholder="Organization/Title" value={row.title} onChange={(e) => updateListItem("work", idx, { title: e.target.value })} />
                 <div className="mb-2 grid grid-cols-2 gap-2">
                   <Input className="h-8 text-xs" placeholder="Date" value={row.date} onChange={(e) => updateListItem("work", idx, { date: e.target.value })} />
@@ -169,7 +343,7 @@ export function ResumeEditor({ data, setData }: ResumeEditorProps) {
             </Button>
 
             {data.projects.map((row, idx) => (
-              <div key={idx} className="rounded-md border p-2">
+              <div key={idx} className={`cursor-move rounded-md border p-2${dropTargetClass("projects", idx)}`} {...dragBoxProps("projects", idx)}>
                 <div className="grid grid-cols-2 gap-2">
                   <Input className="h-8 text-xs" placeholder="Project Type" value={row.type} onChange={(e) => updateListItem("projects", idx, { type: e.target.value })} />
                   <Input className="h-8 text-xs" placeholder="Date" value={row.date} onChange={(e) => updateListItem("projects", idx, { date: e.target.value })} />
@@ -192,9 +366,10 @@ export function ResumeEditor({ data, setData }: ResumeEditorProps) {
 
         <div className="rounded-lg border p-3">
           <h2 className="text-sm font-semibold">Other Sections</h2>
+          <p className="mt-1 text-[11px] text-zinc-600">Drag rows/cards to reorder inside each section.</p>
           <div className="mt-2 space-y-2">
             {data.achievements.map((row, idx) => (
-              <div key={idx} className="rounded border p-2">
+              <div key={idx} className={`cursor-move rounded border p-2${dropTargetClass("achievements", idx)}`} {...dragBoxProps("achievements", idx)}>
                 <Input className="mb-1 h-8 w-full text-xs" placeholder="Achievement" value={row.title} onChange={(e) => updateListItem("achievements", idx, { title: e.target.value })} />
                 <Input className="mb-1 h-8 w-full text-xs" placeholder="Date" value={row.date} onChange={(e) => updateListItem("achievements", idx, { date: e.target.value })} />
                 <Textarea className="text-xs" rows={2} placeholder="Description" value={row.description} onChange={(e) => updateListItem("achievements", idx, { description: e.target.value })} />
@@ -220,21 +395,21 @@ export function ResumeEditor({ data, setData }: ResumeEditorProps) {
             </div>
 
             {data.expertise.map((row, idx) => (
-              <div key={idx} className="flex items-center gap-2">
+              <div key={idx} className={`flex cursor-move items-center gap-2 rounded-sm px-1${dropTargetClass("expertise", idx)}`} {...dragBoxProps("expertise", idx)}>
                 <Input className="h-8 w-full text-xs" placeholder="Expertise line" value={row.text} onChange={(e) => updateListItem("expertise", idx, { text: e.target.value })} />
                 <Button variant="outline" size="sm" onClick={() => removeListItem("expertise", idx)}>Remove</Button>
               </div>
             ))}
 
             {data.techSkills.map((row, idx) => (
-              <div key={idx} className="flex items-center gap-2">
+              <div key={idx} className={`flex cursor-move items-center gap-2 rounded-sm px-1${dropTargetClass("techSkills", idx)}`} {...dragBoxProps("techSkills", idx)}>
                 <Input className="h-8 w-full text-xs" placeholder="Skill line" value={row.text} onChange={(e) => updateListItem("techSkills", idx, { text: e.target.value })} />
                 <Button variant="outline" size="sm" onClick={() => removeListItem("techSkills", idx)}>Remove</Button>
               </div>
             ))}
 
             {data.internships.map((row, idx) => (
-              <div key={idx} className="rounded border p-2">
+              <div key={idx} className={`cursor-move rounded border p-2${dropTargetClass("internships", idx)}`} {...dragBoxProps("internships", idx)}>
                 <Input className="mb-1 h-8 w-full text-xs" placeholder="Organization" value={row.organization} onChange={(e) => updateListItem("internships", idx, { organization: e.target.value })} />
                 <Input className="mb-1 h-8 w-full text-xs" placeholder="Date" value={row.date} onChange={(e) => updateListItem("internships", idx, { date: e.target.value })} />
                 <Input className="mb-1 h-8 w-full text-xs" placeholder="Role" value={row.role} onChange={(e) => updateListItem("internships", idx, { role: e.target.value })} />
@@ -244,7 +419,7 @@ export function ResumeEditor({ data, setData }: ResumeEditorProps) {
             ))}
 
             {data.certifications.map((row, idx) => (
-              <div key={idx} className="rounded border p-2">
+              <div key={idx} className={`cursor-move rounded border p-2${dropTargetClass("certifications", idx)}`} {...dragBoxProps("certifications", idx)}>
                 <Input className="mb-1 h-8 w-full text-xs" placeholder="Name" value={row.name} onChange={(e) => updateListItem("certifications", idx, { name: e.target.value })} />
                 <Input className="mb-1 h-8 w-full text-xs" placeholder="Issuer" value={row.issuer} onChange={(e) => updateListItem("certifications", idx, { issuer: e.target.value })} />
                 <Input className="mb-1 h-8 w-full text-xs" placeholder="Date" value={row.date} onChange={(e) => updateListItem("certifications", idx, { date: e.target.value })} />
@@ -255,7 +430,7 @@ export function ResumeEditor({ data, setData }: ResumeEditorProps) {
 
             {(["por", "extra", "co"] as const).map((group) =>
               data[group].map((row, idx) => (
-                <div key={`${group}-${idx}`} className="rounded border p-2">
+                <div key={`${group}-${idx}`} className={`cursor-move rounded border p-2${dropTargetClass(group, idx)}`} {...dragBoxProps(group, idx)}>
                   <p className="mb-1 text-[11px] font-semibold uppercase text-zinc-600">{group}</p>
                   <Input className="mb-1 h-8 w-full text-xs" placeholder="Title" value={row.title} onChange={(e) => updateListItem(group, idx, { title: e.target.value })} />
                   <Input className="mb-1 h-8 w-full text-xs" placeholder="Date" value={row.date} onChange={(e) => updateListItem(group, idx, { date: e.target.value })} />
@@ -266,7 +441,7 @@ export function ResumeEditor({ data, setData }: ResumeEditorProps) {
             )}
 
             {data.links.map((row, idx) => (
-              <div key={idx} className="rounded border p-2">
+              <div key={idx} className={`cursor-move rounded border p-2${dropTargetClass("links", idx)}`} {...dragBoxProps("links", idx)}>
                 <Input className="mb-1 h-8 w-full text-xs" placeholder="Platform" value={row.platform} onChange={(e) => updateListItem("links", idx, { platform: e.target.value })} />
                 <Input className="h-8 w-full text-xs" placeholder="URL" value={row.url} onChange={(e) => updateListItem("links", idx, { url: e.target.value })} />
                 <Button variant="outline" size="sm" className="mt-2" onClick={() => removeListItem("links", idx)}>Remove</Button>
@@ -274,7 +449,7 @@ export function ResumeEditor({ data, setData }: ResumeEditorProps) {
             ))}
 
             {data.personal.map((row, idx) => (
-              <div key={idx} className="rounded border p-2">
+              <div key={idx} className={`cursor-move rounded border p-2${dropTargetClass("personal", idx)}`} {...dragBoxProps("personal", idx)}>
                 <Input className="mb-1 h-8 w-full text-xs" placeholder="Email" value={row.email} onChange={(e) => updateListItem("personal", idx, { email: e.target.value })} />
                 <Input className="mb-1 h-8 w-full text-xs" placeholder="Phone" value={row.phone} onChange={(e) => updateListItem("personal", idx, { phone: e.target.value })} />
                 <Input className="h-8 w-full text-xs" placeholder="Location" value={row.location} onChange={(e) => updateListItem("personal", idx, { location: e.target.value })} />
@@ -309,6 +484,28 @@ export function ResumeEditor({ data, setData }: ResumeEditorProps) {
               <input type="file" className="hidden" accept="application/json" onChange={importJson} />
             </label>
             <Button size="sm" variant="secondary" onClick={() => window.print()}>Print / Save PDF</Button>
+          </div>
+
+          <div className="mt-4 rounded-md border p-2">
+            <p className="text-xs font-semibold">Cloud (Firebase)</p>
+            <p className="mt-1 text-[11px] text-zinc-600">
+              Use the same cloud key on any device to load the same resume.
+            </p>
+            <Input
+              className="mt-2 h-8 text-xs"
+              placeholder="Cloud key (e.g. auris-myname)"
+              value={cloudKey}
+              onChange={(e) => setCloudKey(e.target.value)}
+            />
+            <div className="mt-2 flex flex-wrap gap-2">
+              <Button size="sm" onClick={saveToCloud} disabled={cloudBusy}>
+                Save to Cloud
+              </Button>
+              <Button size="sm" variant="outline" onClick={loadFromCloud} disabled={cloudBusy}>
+                Load from Cloud
+              </Button>
+            </div>
+            {cloudStatus ? <p className="mt-2 text-[11px] text-zinc-700">{cloudStatus}</p> : null}
           </div>
         </div>
       </div>

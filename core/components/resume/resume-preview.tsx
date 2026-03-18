@@ -1,7 +1,6 @@
 import {
   ResumeData,
   safeUrl,
-  sortByDateDesc,
 } from "@/lib/resume";
 
 type ResumePreviewProps = {
@@ -13,16 +12,6 @@ const sectionTitleClass =
 
 export function ResumePreview({ data }: ResumePreviewProps) {
   const v = data.sectionVisibility;
-
-  const educationSorted = sortByDateDesc(data.education, "year");
-  const achievementsSorted = sortByDateDesc(data.achievements, "date");
-  const workSorted = sortByDateDesc(data.work, "date");
-  const internshipsSorted = sortByDateDesc(data.internships, "date");
-  const projectsSorted = sortByDateDesc(data.projects, "date");
-  const certificationsSorted = sortByDateDesc(data.certifications, "date");
-  const porSorted = sortByDateDesc(data.por, "date");
-  const extraSorted = sortByDateDesc(data.extra, "date");
-  const coSorted = sortByDateDesc(data.co, "date");
 
   return (
     <article
@@ -88,7 +77,7 @@ export function ResumePreview({ data }: ResumePreviewProps) {
         </>
       )}
 
-      {v.education && educationSorted.length > 0 && (
+      {v.education && data.education.length > 0 && (
         <>
           <div className={sectionTitleClass}>Education</div>
           <table className="w-full table-fixed border-collapse">
@@ -112,7 +101,7 @@ export function ResumePreview({ data }: ResumePreviewProps) {
               </tr>
             </thead>
             <tbody>
-              {educationSorted.map((row, idx) => (
+              {data.education.map((row, idx) => (
                 <tr key={idx}>
                   <td className="border border-zinc-700 px-1 py-0.5">{row.year}</td>
                   <td className="border border-zinc-700 px-1 py-0.5">{row.degree}</td>
@@ -140,12 +129,12 @@ export function ResumePreview({ data }: ResumePreviewProps) {
         </>
       )}
 
-      {v.achievements && achievementsSorted.length > 0 && (
+      {v.achievements && data.achievements.length > 0 && (
         <>
           <div className={sectionTitleClass}>Achievements and Accomplishments</div>
           <table className="w-full border-collapse">
             <tbody>
-              {achievementsSorted.map((a, idx) => (
+              {data.achievements.map((a, idx) => (
                 <tr key={idx}>
                   <td className="border border-zinc-700 px-1 py-0.5 align-top">
                     <strong>{a.title}</strong>
@@ -166,10 +155,10 @@ export function ResumePreview({ data }: ResumePreviewProps) {
         </>
       )}
 
-      {v.work && workSorted.length > 0 && (
+      {v.work && data.work.length > 0 && (
         <>
           <div className={sectionTitleClass}>Work Experience</div>
-          {workSorted.map((w, idx) => (
+          {data.work.map((w, idx) => (
             <div key={idx}>
               <table className="w-full border-collapse">
                 <tbody>
@@ -198,10 +187,10 @@ export function ResumePreview({ data }: ResumePreviewProps) {
         </>
       )}
 
-      {v.internships && internshipsSorted.length > 0 && (
+      {v.internships && data.internships.length > 0 && (
         <>
           <div className={sectionTitleClass}>Internships</div>
-          {internshipsSorted.map((i, idx) => (
+          {data.internships.map((i, idx) => (
             <div key={idx} className="border border-zinc-700 border-t-0 px-2 py-1 first:border-t">
               <div className="flex justify-between font-semibold">
                 <span>{i.organization}</span>
@@ -214,10 +203,10 @@ export function ResumePreview({ data }: ResumePreviewProps) {
         </>
       )}
 
-      {v.projects && projectsSorted.length > 0 && (
+      {v.projects && data.projects.length > 0 && (
         <>
           <div className={sectionTitleClass}>Projects</div>
-          {projectsSorted.map((p, idx) => (
+          {data.projects.map((p, idx) => (
             <div key={idx} className="border border-zinc-700 border-t-0 px-2 py-1 first:border-t">
               <div className="flex justify-between font-semibold">
                 <span>{p.type}</span>
@@ -243,12 +232,12 @@ export function ResumePreview({ data }: ResumePreviewProps) {
         </>
       )}
 
-      {v.certifications && certificationsSorted.length > 0 && (
+      {v.certifications && data.certifications.length > 0 && (
         <>
           <div className={sectionTitleClass}>Certifications</div>
           <table className="w-full border-collapse">
             <tbody>
-              {certificationsSorted.map((c, idx) => (
+              {data.certifications.map((c, idx) => (
                 <tr key={idx}>
                   <td className="border border-zinc-700 px-1 py-0.5">
                     <strong>{c.name}</strong>
@@ -269,9 +258,9 @@ export function ResumePreview({ data }: ResumePreviewProps) {
         </>
       )}
 
-      {v.por && porSorted.length > 0 && (
+      {v.por && data.por.length > 0 && (
         <>
-          {porSorted.map((p, idx) => (
+          {data.por.map((p, idx) => (
             <div key={idx}>
               <div className={sectionTitleClass}>Positions of Responsibility</div>
               <table className="w-full border-collapse">
@@ -293,9 +282,9 @@ export function ResumePreview({ data }: ResumePreviewProps) {
         </>
       )}
 
-      {v.extra && extraSorted.length > 0 && (
+      {v.extra && data.extra.length > 0 && (
         <>
-          {extraSorted.map((p, idx) => (
+          {data.extra.map((p, idx) => (
             <div key={idx}>
               <div className={sectionTitleClass}>Extra Curricular Activities</div>
               <table className="w-full border-collapse">
@@ -317,12 +306,12 @@ export function ResumePreview({ data }: ResumePreviewProps) {
         </>
       )}
 
-      {v.co && coSorted.length > 0 && (
+      {v.co && data.co.length > 0 && (
         <>
           <div className={sectionTitleClass}>Co-Curricular Activities</div>
           <table className="w-full border-collapse">
             <tbody>
-              {coSorted.map((c, idx) => (
+              {data.co.map((c, idx) => (
                 <tr key={idx}>
                   <td className="w-[86%] border border-zinc-700 px-1 py-0.5 align-top">
                     <strong>{c.title}</strong>
