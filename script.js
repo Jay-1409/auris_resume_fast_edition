@@ -788,7 +788,7 @@ function render() {
           <th style="width:30%">Degree</th>
           <th style="width:19%">University/Board</th>
           <th style="width:27%">Institute</th>
-          <th style="width:12%">/ CGPA</th>
+          <th style="width:12%">% / CGPA</th>
         </tr>
         ${eduRows}
       </table>
