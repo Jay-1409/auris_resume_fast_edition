@@ -10,6 +10,8 @@ const cloudLoadBtn = document.getElementById("cloudLoadBtn");
 const instructionsModal = document.getElementById("instructionsModal");
 const openInstructionsBtn = document.getElementById("openInstructionsBtn");
 const closeInstructionsBtn = document.getElementById("closeInstructionsBtn");
+const siteNotice = document.getElementById("siteNotice");
+const closeSiteNoticeBtn = document.getElementById("closeSiteNoticeBtn");
 
 const FIREBASE_CONFIG = window.FIREBASE_CONFIG || {
 	apiKey: "",
@@ -2206,6 +2208,10 @@ document.getElementById("fontIncrease").addEventListener("click", () => {
 document.getElementById("fontReset").addEventListener("click", () => {
 	applyFontScale(1);
 	sync();
+});
+
+closeSiteNoticeBtn?.addEventListener("click", () => {
+	siteNotice?.classList.add("hidden");
 });
 
 initFirebase();
