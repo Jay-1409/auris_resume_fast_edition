@@ -45,6 +45,37 @@ body {
 		linear-gradient(140deg, var(--bg-grad-c), transparent 60%), var(--bg-base);
 }
 
+.site-notice {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-1);
+	padding: 10px 14px;
+	background: #7b1a1a;
+	color: #fff;
+	font-size: 0.9rem;
+	font-weight: 600;
+}
+
+.site-notice button {
+	padding: 4px 10px;
+	min-width: 34px;
+	border-radius: 10px;
+	border: 1px solid rgba(255, 255, 255, 0.45);
+	background: rgba(255, 255, 255, 0.16);
+	color: #fff;
+}
+
+.site-notice button:hover {
+	border-color: rgba(255, 255, 255, 0.7);
+	box-shadow: none;
+	transform: none;
+}
+
+.site-notice.hidden {
+	display: none;
+}
+
 .app {
 	min-height: 100vh;
 	display: grid;
@@ -839,6 +870,10 @@ details[open] > .import-ai-summary::before {
 
 	.preview-panel > h2 {
 		display: none;
+	}
+
+	.site-notice {
+		display: none !important;
 	}
 
 	.app {
